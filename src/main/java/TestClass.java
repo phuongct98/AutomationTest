@@ -5,6 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
@@ -41,7 +42,36 @@ public class TestClass {
         WebElement lbStatusButton = chromeDriver.findElement(By.id("lbStatusButton"));
         lbStatusButton.getText(); //Hàm gettext hỗ trợ lấy ra các text bên trong thẻ đó trả về kiểu dl string
         String lbStatusButtonValue = lbStatusButton.getText();
-        Assert.assertEquals(lbStatusButtonValue, "Click on Button 11");
+        Assert.assertEquals(lbStatusButtonValue, "Click on Button 1");
+        WebElement input1 = chromeDriver.findElement(By.id("txtInput1"));
+        String inputValue = input1.getAttribute("value");//lấy value của ô input vì có biến value ở html nên mới
+        Assert.assertEquals( inputValue, "Default value of input" );
+        String newValue = "ABC";
+        input1.clear();
+        input1.sendKeys(newValue);
+        String newInput3 = "ABC123.11%%%";
+        String expect = "123.11";
+        WebElement input3 = chromeDriver.findElement(By.id("txtInput3"));
+        sendText(input3, newInput3);
+        sleep(100);
+        String actual = getValue(input3);
+        Assert.assertEquals(actual, expect);
+        WebElement select1 = chromeDriver.findElement(By.id("exampleSelect1"));
+        Select select = new Select(select1);
+        select.selectByVisibleText("Option 4"); //Truyền vào cái Text của option mà chúng ta mong muốn
+//        select.selectByValue(""); //truyền value vào
+//        select.selectByIndex(1);// đếm vị trí của option đếm từ số 0
+        WebElement selectOption = select.getFirstSelectedOption(); // trả về webelement lấy đc weblement của option mà select sau đó lấy value
+        String value = getValue(selectOption);
+        String text = getText(selectOption);
+        System.out.println(value);
+        System.out.println(text);
+
+        WebElement check = chromeDriver.findElement(By.id("defaultCheck3"));
+        boolean isChecked = check.isSelected(); //isSelected trạng thái của checkbox là đang đc check hay k đc check
+        System.out.println(isChecked);
+
+
 //        by.name thường sử dụng ô textbox để nhập liệu hay là selectbox
 //          List<WebElement> button = chromeDriver.findElements(By.className("btn-success"));
 ////          for (int i = 0; i < buttons.size(); i ++)
@@ -65,6 +95,19 @@ public class TestClass {
 //        Assert.assertNotEquals("a", "A"); //pass khi giá trị thực tế và mong đợi k bằng nhau có thể truyền giá trị khác nhau
 //        Assert.assertTrue(true); //pass khi biểu thức truyền vào là true
 
+    }
+
+    public String getValue ( WebElement element){
+        return element.getAttribute("value");
+    }
+    public String getText (WebElement element){
+        return element.getText();
+    }
+    public void sendText ( WebElement element, String input){
+        element.clear();
+        sleep(100);
+        element.sendKeys(input);
+        sleep(100);
     }
 
     @AfterMethod // clear data
